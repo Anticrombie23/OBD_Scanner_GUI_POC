@@ -1,10 +1,14 @@
-package com.harm.solutions;
+package src.com.harm.solutions;
 
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import javax.swing.JLabel;
+import java.awt.Label;
 
-public class OBDScannerDriver {
+public class OBD_Scanner_Driver {
 
 	private JFrame frame;
 
@@ -15,7 +19,7 @@ public class OBDScannerDriver {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					OBDScannerDriver window = new OBDScannerDriver();
+					OBD_Scanner_Driver window = new OBD_Scanner_Driver();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -27,7 +31,7 @@ public class OBDScannerDriver {
 	/**
 	 * Create the application.
 	 */
-	public OBDScannerDriver() {
+	public OBD_Scanner_Driver() {
 		initialize();
 	}
 
@@ -36,8 +40,12 @@ public class OBDScannerDriver {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 412, 729);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+		
+		Label label1 = new Label("OBD Wiz to Quote Utility");
+		label1.setBounds(70, 28, 236, 22);
+		frame.getContentPane().add(label1);
 	}
-
 }
