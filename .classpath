@@ -22,5 +22,7 @@
 	<classpathentry kind="lib" path="dependencies/xstream-jmh-1.4.11.1.jar"/>
 	<classpathentry kind="lib" path="dependencies/kxml2-2.3.0.jar"/>
 	<classpathentry kind="lib" path="dependencies/jaxb-api-2.1.jar"/>
+	<classpathentry kind="lib" path="dependencies/pdfbox-2.0.13.jar"/>
+	<classpathentry kind="lib" path="dependencies/commons-logging-1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

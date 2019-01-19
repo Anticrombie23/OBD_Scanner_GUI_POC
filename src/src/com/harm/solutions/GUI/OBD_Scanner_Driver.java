@@ -12,7 +12,9 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -37,6 +39,11 @@ public class OBD_Scanner_Driver {
 	private PDFGenerator generator;
 
 	Doc rawData;
+	private JTextField textField_1;
+	private JTextField textField_2;
+	private JTextField textField_3;
+	private JTextField textField_4;
+	private JTextField textField_5;
 
 	/**
 	 * Launch the application.
@@ -56,8 +63,11 @@ public class OBD_Scanner_Driver {
 
 	/**
 	 * Create the application.
+	 * 
+	 * @throws IOException
+	 * @throws MalformedURLException
 	 */
-	public OBD_Scanner_Driver() {
+	public OBD_Scanner_Driver() throws MalformedURLException, IOException {
 		initialize();
 		generator = new PDFGenerator();
 	}
@@ -78,26 +88,29 @@ public class OBD_Scanner_Driver {
 
 		JButton createPDFButton = new JButton("Create PDF Invoice");
 		createPDFButton.setBounds(97, 619, 261, 23);
-		
+
 		createPDFButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				validateSubmission();
+			}
+
+			private void validateSubmission() {
 				// TODO Auto-generated method stub
 				
 			}
-			
+
 		});
-		
-		
+
 		frame.getContentPane().add(createPDFButton);
 
 		Label label = new Label("Company Name to Use: ");
-		label.setBounds(10, 168, 129, 22);
+		label.setBounds(28, 166, 154, 22);
 		frame.getContentPane().add(label);
 
 		textField = new JTextField();
-		textField.setBounds(131, 168, 215, 20);
+		textField.setBounds(182, 168, 176, 20);
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);
 
@@ -173,6 +186,51 @@ public class OBD_Scanner_Driver {
 		});
 		btnNewButton_1.setBounds(97, 521, 261, 23);
 		frame.getContentPane().add(btnNewButton_1);
+		
+		JLabel lblNewLabel = new JLabel("Street Address: ");
+		lblNewLabel.setBounds(28, 202, 144, 14);
+		frame.getContentPane().add(lblNewLabel);
+		
+		textField_1 = new JTextField();
+		textField_1.setBounds(182, 199, 176, 20);
+		frame.getContentPane().add(textField_1);
+		textField_1.setColumns(10);
+		
+		JLabel lblCityStZip = new JLabel("City, ST ZIP Code: ");
+		lblCityStZip.setBounds(28, 237, 154, 14);
+		frame.getContentPane().add(lblCityStZip);
+		
+		textField_2 = new JTextField();
+		textField_2.setBounds(182, 234, 176, 20);
+		frame.getContentPane().add(textField_2);
+		textField_2.setColumns(10);
+		
+		textField_3 = new JTextField();
+		textField_3.setBounds(182, 265, 176, 20);
+		frame.getContentPane().add(textField_3);
+		textField_3.setColumns(10);
+		
+		JLabel lblNewLabel_1 = new JLabel("Phone Number:");
+		lblNewLabel_1.setBounds(28, 268, 144, 14);
+		frame.getContentPane().add(lblNewLabel_1);
+		
+		JLabel lblInvoiceNumber = new JLabel("Invoice Number: ");
+		lblInvoiceNumber.setBounds(28, 353, 144, 14);
+		frame.getContentPane().add(lblInvoiceNumber);
+		
+		textField_4 = new JTextField();
+		textField_4.setBounds(182, 350, 176, 20);
+		frame.getContentPane().add(textField_4);
+		textField_4.setColumns(10);
+		
+		JLabel lblDateInvoicePayable = new JLabel("Date Invoice Payable:");
+		lblDateInvoicePayable.setBounds(28, 402, 154, 14);
+		frame.getContentPane().add(lblDateInvoicePayable);
+		
+		textField_5 = new JTextField();
+		textField_5.setBounds(182, 399, 176, 20);
+		frame.getContentPane().add(textField_5);
+		textField_5.setColumns(10);
 
 	}
 }
