@@ -13,13 +13,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
-
-import javax.xml.bind.annotation.*;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -29,12 +24,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-
+import src.com.harm.solutions.PDFGenerator.PDFGenerator;
 import src.com.harm.solutions.models.Doc;
 
 public class OBD_Scanner_Driver {
@@ -43,6 +34,9 @@ public class OBD_Scanner_Driver {
 	private JTextField textField;
 
 	private Map xmlDiagnosticContent;
+	private PDFGenerator generator;
+
+	Doc rawData;
 
 	/**
 	 * Launch the application.
@@ -65,6 +59,7 @@ public class OBD_Scanner_Driver {
 	 */
 	public OBD_Scanner_Driver() {
 		initialize();
+		generator = new PDFGenerator();
 	}
 
 	/**
@@ -81,9 +76,21 @@ public class OBD_Scanner_Driver {
 		label1.setBounds(70, 28, 288, 22);
 		frame.getContentPane().add(label1);
 
-		JButton btnNewButton = new JButton("Create PDF Invoice");
-		btnNewButton.setBounds(97, 619, 261, 23);
-		frame.getContentPane().add(btnNewButton);
+		JButton createPDFButton = new JButton("Create PDF Invoice");
+		createPDFButton.setBounds(97, 619, 261, 23);
+		
+		createPDFButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		
+		
+		frame.getContentPane().add(createPDFButton);
 
 		Label label = new Label("Company Name to Use: ");
 		label.setBounds(10, 168, 129, 22);
@@ -133,14 +140,12 @@ public class OBD_Scanner_Driver {
 									fileContent += line;
 
 								}
-								
-						
 
 							}
-							
-					//		Document doc = loadXMLFromString(fileContent);
+
+							// Document doc = loadXMLFromString(fileContent);
 							String replaced = fileContent.replaceAll(" culture=\"\" version=\"1.00\"", "");
-							
+
 							InputStream stream = new ByteArrayInputStream(replaced.getBytes(StandardCharsets.UTF_8));
 
 							final InputStream targetStream = new DataInputStream(new FileInputStream(selectedFile));
@@ -157,15 +162,12 @@ public class OBD_Scanner_Driver {
 
 			}
 
-
 			private void loadFileIntoXMLObject(InputStream file) throws Exception {
 
 				JAXBContext jc = JAXBContext.newInstance(Doc.class);
 				Unmarshaller unmarshaller = jc.createUnmarshaller();
 
-				Doc wrapper = (Doc) unmarshaller.unmarshal(file);
-				System.out.println(wrapper.getCreatedDate());
-				// System.out.println(xmlDiagnosticContent.toString());
+				rawData = (Doc) unmarshaller.unmarshal(file);
 
 			}
 		});
