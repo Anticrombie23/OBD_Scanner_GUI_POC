@@ -3,22 +3,40 @@ package src.com.harm.solutions.PDFGenerator;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.List;
+
+import javax.swing.JTextField;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
+import src.com.harm.solutions.models.Doc;
+
 public class PDFGenerator {
 
 	File file;
-
 	PDDocument document;
 
 	public PDFGenerator() throws MalformedURLException, IOException {
 		initPDFTemplate();
 	}
 
-	public void updatePDF() {
+	public void updateAndSavePDFToDesktop(List<JTextField> fieldContents, Doc rawData) {
+
+		updatePDF(fieldContents, rawData);
+		savePDFToDesktop();
+
+	}
+
+	private void savePDFToDesktop() {
+		
+		
+		
+
+	}
+
+	private void updatePDF(List<JTextField> fieldContents, Doc rawData) {
 		PDPage page = document.getPage(1);
 		try {
 			PDPageContentStream contentStream = new PDPageContentStream(document, page);
