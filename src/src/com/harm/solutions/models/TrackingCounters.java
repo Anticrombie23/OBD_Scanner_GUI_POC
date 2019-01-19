@@ -2,11 +2,19 @@ package src.com.harm.solutions.models;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlElement;
+
 public class TrackingCounters {
-	ArrayList<Object> TrackingCounter = new ArrayList<Object>();
 
-	// Getter Methods
+	@XmlElement(name = "TrackingCounter")
+	ArrayList<TrackingCounter> TrackingCounter = new ArrayList<TrackingCounter>();
 
-	// Setter Methods
+	public ArrayList<TrackingCounter> getTrackingCounter() {
+		return TrackingCounter;
+	}
+
+	public void setTrackingCounter(ArrayList<TrackingCounter> trackingCounter) {
+		TrackingCounter = trackingCounter;
+	}
 
 }

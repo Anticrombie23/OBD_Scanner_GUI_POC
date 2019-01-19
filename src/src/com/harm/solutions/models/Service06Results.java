@@ -1,23 +1,24 @@
 package src.com.harm.solutions.models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
 public class Service06Results {
 	@XmlElement(name = "IsCAN")
 	private String IsCAN;
-	ArrayList<Object> TestResult = new ArrayList<Object>();
 
-	// Getter Methods
+	@XmlElement(name = "TestResult")
+	List<TestResult> results = new ArrayList<TestResult>();
 
-	public String getIsCAN() {
-		return IsCAN;
+
+	public ArrayList<TestResult> getResult() {
+		return (ArrayList<TestResult>) results;
 	}
 
-	// Setter Methods
-
-	public void setIsCAN(String IsCAN) {
-		this.IsCAN = IsCAN;
+	public void setResult(ArrayList<TestResult> result) {
+		this.results = result;
 	}
+
 }

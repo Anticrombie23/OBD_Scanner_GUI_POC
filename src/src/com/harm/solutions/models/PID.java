@@ -1,31 +1,32 @@
 package src.com.harm.solutions.models;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+
 
 public class PID {
 
-	private String _pt;
+	private String pt;
 
-	private String _uid;
+	private String uid;
 
-	// Getter Methods
-	@XmlElement(name = "pt")
-	public String get_pt() {
-		return _pt;
+	@XmlAttribute
+	public String getPt() {
+		return pt;
 	}
 
-	@XmlElement(name = "pt")
-	public String get_uid() {
-		return _uid;
+	public void setPt(String pt) {
+		this.pt = pt;
 	}
 
-	// Setter Methods
-
-	public void set_pt(String _pt) {
-		this._pt = _pt;
+	@XmlAttribute
+	public String getUid() {
+		return uid;
 	}
 
-	public void set_uid(String _uid) {
-		this._uid = _uid;
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
+
 }

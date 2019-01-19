@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PIDResult {
 
-	@XmlElement
+	@XmlElement(name="Response")
 	private Response response;
 
 	

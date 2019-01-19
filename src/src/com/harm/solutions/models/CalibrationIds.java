@@ -2,11 +2,19 @@ package src.com.harm.solutions.models;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlElement;
+
 public class CalibrationIds {
-	ArrayList<Object> Item = new ArrayList<Object>();
 
-	// Getter Methods
+	@XmlElement(name = "Item")
+	ArrayList<Item> items = new ArrayList<Item>();
 
-	// Setter Methods
+	public ArrayList<Item> getItem() {
+		return items;
+	}
+
+	public void setItem(ArrayList<Item> item) {
+		this.items = item;
+	}
 
 }
