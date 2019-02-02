@@ -16,8 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -28,20 +27,60 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
+import com.itextpdf.text.DocumentException;
 
 import src.com.harm.solutions.PDFGenerator.PDFGenerator;
 import src.com.harm.solutions.models.Doc;
+import src.com.harm.solutions.utilities.FileNameUtility;
 import src.com.harm.solutions.utilities.ProcessingException;
 
 public class OBD_Scanner_Driver {
 
+	// private final class ScannerUtils implements ActionListener {
+	// private final JFileChooser chooser;
+	// private final JLabel fileSelectedLabel;
+	// private final JLabel notNullLabel;
+	//
+	// private ScannerUtils(JFileChooser chooser, JLabel fileSelectedLabel, JLabel
+	// notNullLabel) {
+	// this.chooser = chooser;
+	// this.fileSelectedLabel = fileSelectedLabel;
+	// this.notNullLabel = notNullLabel;
+	// }
+	//
+	// public void actionPerformed(ActionEvent arg0) {
+	// selectScanFile(fileSelectedLabel, chooser, notNullLabel);
+	// }
+	//
+	// private void validateFileAddedSuccessfully(JLabel notNullLabel) {
+	// if (null == rawData) {
+	// throw new ProcessingException(".drt file not added!");
+	// } else {
+	// notNullLabel.setEnabled(false);
+	// notNullLabel.setText("");
+	// }
+	// }
+	//
+	// private void loadFileIntoXMLObject(InputStream file) throws Exception {
+	//
+	// JAXBContext jc = JAXBContext.newInstance(Doc.class);
+	// Unmarshaller unmarshaller = jc.createUnmarshaller();
+	//
+	// rawData = (Doc) unmarshaller.unmarshal(file);
+	//
+	// }
+	// }
+
 	private JFrame frame;
 	private JTextField companyName;
 	private PDFGenerator generator;
+	FileNameUtility utility = new FileNameUtility();
 
-	Doc rawData;
-
+	private Doc preScan;
+	private Doc postScan;
 	private JTextField companyStreetAddress;
 	private JTextField companyCityStateZip;
 	private JTextField companyPhoneNumber;
@@ -55,7 +94,7 @@ public class OBD_Scanner_Driver {
 	final String html1 = "<html><body style='width: ";
 	final String html2 = "px'>";
 
-	List<JTextField> fieldContents = new ArrayList<JTextField>();
+	Map<String, JTextField> fieldContents = new HashMap<String, JTextField>();
 
 	/**
 	 * Launch the application.
@@ -86,15 +125,17 @@ public class OBD_Scanner_Driver {
 	}
 
 	private void initJTextFields() {
-		fieldContents.add(companyStreetAddress);
-		fieldContents.add(companyCityStateZip);
-		fieldContents.add(companyPhoneNumber);
-		fieldContents.add(companyPhoneNumber);
-		fieldContents.add(invoicePayableDate);
-		fieldContents.add(customerFullName);
-		fieldContents.add(customerStreetAddress);
-		fieldContents.add(customerCityStateZip);
-		fieldContents.add(customerPhoneNumber);
+		fieldContents.put("companyName", companyName);
+		fieldContents.put("companyStreetAddress", companyStreetAddress);
+		fieldContents.put("companyCityStateZip", companyCityStateZip);
+		fieldContents.put("companyPhoneNumber", companyPhoneNumber);
+		fieldContents.put("companyPhoneNumber", companyPhoneNumber);
+		fieldContents.put("invoiceNumber", invoiceNumber);
+		fieldContents.put("invoicePayableDate", invoicePayableDate);
+		fieldContents.put("customerFullName", customerFullName);
+		fieldContents.put("customerStreetAddress", customerStreetAddress);
+		fieldContents.put("customerCityStateZip", customerCityStateZip);
+		fieldContents.put("customerPhoneNumber", customerPhoneNumber);
 	}
 
 	/**
@@ -240,7 +281,7 @@ public class OBD_Scanner_Driver {
 		frame.getContentPane().add(notNullLabel);
 
 		JButton createPDFButton = new JButton("Create PDF Invoice");
-		createPDFButton.setBounds(28, 619, 303, 23);
+		createPDFButton.setBounds(28, 654, 303, 23);
 
 		createPDFButton.addActionListener(new ActionListener() {
 
@@ -249,22 +290,29 @@ public class OBD_Scanner_Driver {
 				validateSubmission();
 
 				if (notNullLabel.isEnabled() != true) {
-					createPDF();
+					try {
+						createPDF();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (DocumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					alertUserPDFExists();
 				}
 
 			}
 
 			private void alertUserPDFExists() {
-				String fileLocation = System.getProperty("user.home") + "/Desktop/";
-				String fileName = invoiceNumber.getText() + ".pdf";
-				JOptionPane.showMessageDialog(createPDFButton,
-						"PDF Successfully Generated at: " + fileLocation + fileName);
+
+				String absolutePath = utility.generateFileName(fieldContents);
+				JOptionPane.showMessageDialog(createPDFButton, "PDF Successfully Generated at: " + absolutePath);
 
 			}
 
-			private void createPDF() {
-				generator.updateAndSavePDFToDesktop(fieldContents, rawData);
+			private void createPDF() throws IOException, DocumentException {
+				generator.updateAndSavePDFToDesktop(fieldContents, preScan);
 			}
 
 			private void validateSubmission() {
@@ -296,8 +344,8 @@ public class OBD_Scanner_Driver {
 			}
 
 			private void validateFileAddedSuccessfully(JLabel notNullLabel) {
-				if (null == rawData) {
-					throw new ProcessingException(".drt file not added!");
+				if (null == preScan && null == postScan) {
+					throw new ProcessingException("One (1) scan need be added.");
 				} else {
 					notNullLabel.setEnabled(false);
 					notNullLabel.setText("");
@@ -318,84 +366,105 @@ public class OBD_Scanner_Driver {
 
 		JLabel lblNewLabel_3 = new JLabel("Josh Harm 2019");
 		lblNewLabel_3.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_3.setBounds(28, 678, 303, 14);
+		lblNewLabel_3.setBounds(28, 687, 303, 14);
 		frame.getContentPane().add(lblNewLabel_3);
 
-		JButton btnNewButton_1 = new JButton("Select Diagnostic Report (.drt) File ");
-		btnNewButton_1.addActionListener(new ActionListener() {
+		JButton preScan = new JButton("Select PreScan Diagnostic Report (.drt) File ");
+		preScan.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				selectScanFile(fileSelectedLabel, chooser, notNullLabel, 1);
+			}
+
+		});
+		preScan.setBounds(28, 585, 303, 23);
+		frame.getContentPane().add(preScan);
+
+		JButton postScan = new JButton("Select PostScan Diagnostic Report (.drt) File");
+		postScan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				int returnValue = chooser.showOpenDialog(null);
-
-				if (returnValue == JFileChooser.APPROVE_OPTION) {
-					File selectedFile = new File(chooser.getSelectedFile().toPath().toString());
-					// File newFile = new File(selectedFile,
-					// chooser.getSelectedFile().toPath().toString()"drt.txt");
-					if (!selectedFile.getPath().substring(selectedFile.getPath().length() - 4).equals(".drt")) {
-						fileSelectedLabel.setText("File Selected was not .drt!");
-						fileSelectedLabel.setBackground(Color.RED);
-					} else {
-						try {
-							String fileContent = "";
-							BufferedReader br = new BufferedReader(new FileReader(selectedFile));
-
-							String line;
-							boolean isFirstLine = true;
-							while ((line = br.readLine()) != null) {
-
-								if (isFirstLine) {
-									// TRASH THAT SUCKA
-									isFirstLine = false;
-								} else {
-									System.out.println(line);
-									fileContent += line;
-
-								}
-
-							}
-
-							// Document doc = loadXMLFromString(fileContent);
-							String replaced = fileContent.replaceAll(" culture=\"\" version=\"1.00\"", "");
-
-							InputStream stream = new ByteArrayInputStream(replaced.getBytes(StandardCharsets.UTF_8));
-
-							final InputStream targetStream = new DataInputStream(new FileInputStream(selectedFile));
-							loadFileIntoXMLObject(stream);
-						} catch (Exception e) {
-							e.printStackTrace();
-							fileSelectedLabel
-									.setText("File chosen was not formatted properly. Please choose another file");
-						}
-						fileSelectedLabel.setText("File added");
-						System.out.println("DRT File selected! ");
-					}
-
-				}
-
-				validateFileAddedSuccessfully(notNullLabel);
-
-			}
-
-			private void validateFileAddedSuccessfully(JLabel notNullLabel) {
-				if (null == rawData) {
-					throw new ProcessingException(".drt file not added!");
-				} else {
-					notNullLabel.setEnabled(false);
-					notNullLabel.setText("");
-				}
-			}
-
-			private void loadFileIntoXMLObject(InputStream file) throws Exception {
-
-				JAXBContext jc = JAXBContext.newInstance(Doc.class);
-				Unmarshaller unmarshaller = jc.createUnmarshaller();
-
-				rawData = (Doc) unmarshaller.unmarshal(file);
-
+				selectScanFile(fileSelectedLabel, chooser, notNullLabel, 2);
 			}
 		});
-		btnNewButton_1.setBounds(28, 585, 303, 23);
-		frame.getContentPane().add(btnNewButton_1);
+		postScan.setBounds(28, 620, 306, 23);
+		frame.getContentPane().add(postScan);
+
+	}
+
+	protected void selectScanFile(JLabel fileSelectedLabel, JFileChooser chooser, JLabel notNullLabel, int scanType) {
+		int returnValue = chooser.showOpenDialog(null);
+
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = new File(chooser.getSelectedFile().toPath().toString());
+			// File newFile = new File(selectedFile,
+			// chooser.getSelectedFile().toPath().toString()"drt.txt");
+			if (!selectedFile.getPath().substring(selectedFile.getPath().length() - 4).equals(".drt")) {
+				fileSelectedLabel.setText("File Selected was not .drt!");
+				fileSelectedLabel.setBackground(Color.RED);
+			} else {
+				try {
+					String fileContent = "";
+					BufferedReader br = new BufferedReader(new FileReader(selectedFile));
+
+					String line;
+					boolean isFirstLine = true;
+					while ((line = br.readLine()) != null) {
+
+						if (isFirstLine) {
+							// TRASH THAT SUCKA
+							isFirstLine = false;
+						} else {
+							System.out.println(line);
+							fileContent += line;
+
+						}
+
+					}
+
+					// Document doc = loadXMLFromString(fileContent);
+					String replaced = fileContent.replaceAll(" culture=\"\" version=\"1.00\"", "");
+
+					InputStream stream = new ByteArrayInputStream(replaced.getBytes(StandardCharsets.UTF_8));
+
+					final InputStream targetStream = new DataInputStream(new FileInputStream(selectedFile));
+					loadFileIntoXMLObject(stream, selectedFile, scanType);
+				} catch (Exception e) {
+					e.printStackTrace();
+					fileSelectedLabel.setText("File chosen was not formatted properly. Please choose another file");
+				}
+
+				fileSelectedLabel.setText(
+						scanType == 1 ? "Pre-scan file added successfully." : "Post-Scan file added successfully");
+
+				System.out.println("DRT File selected! ");
+			}
+
+		}
+
+		validateFileAddedSuccessfully(notNullLabel);
+	}
+
+	private void validateFileAddedSuccessfully(JLabel notNullLabel) {
+		if (null == preScan) {
+			throw new ProcessingException(".drt file not added!");
+		} else {
+			notNullLabel.setEnabled(false);
+			notNullLabel.setText("");
+		}
+
+	}
+
+	private void loadFileIntoXMLObject(InputStream stream, File file, int scanType) throws JAXBException {
+		JAXBContext jc = JAXBContext.newInstance(Doc.class);
+		Unmarshaller unmarshaller = jc.createUnmarshaller();
+		if (scanType == 1) {
+			preScan = (Doc) unmarshaller.unmarshal(file);
+		} else if (scanType == 2) {
+			postScan = (Doc) unmarshaller.unmarshal(file);
+		}
 
 	}
 }
