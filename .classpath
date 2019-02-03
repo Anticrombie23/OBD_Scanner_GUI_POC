@@ -24,37 +24,15 @@
 	<classpathentry kind="lib" path="dependencies/jaxb-api-2.1.jar"/>
 	<classpathentry kind="lib" path="dependencies/pdfbox-2.0.13.jar"/>
 	<classpathentry kind="lib" path="dependencies/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="dependencies/barcodes-7.1.3-javadoc.jar"/>
-	<classpathentry kind="lib" path="dependencies/barcodes-7.1.3-sources.jar"/>
 	<classpathentry kind="lib" path="dependencies/barcodes-7.1.3.jar"/>
 	<classpathentry kind="lib" path="dependencies/font-asian-7.1.3.jar"/>
-	<classpathentry kind="lib" path="dependencies/forms-7.1.3-javadoc.jar"/>
-	<classpathentry kind="lib" path="dependencies/forms-7.1.3-sources.jar"/>
 	<classpathentry kind="lib" path="dependencies/forms-7.1.3.jar"/>
 	<classpathentry kind="lib" path="dependencies/hyph-7.1.3.jar"/>
-	<classpathentry kind="lib" path="dependencies/io-7.1.3-javadoc.jar"/>
-	<classpathentry kind="lib" path="dependencies/io-7.1.3-sources.jar"/>
 	<classpathentry kind="lib" path="dependencies/io-7.1.3.jar"/>
-	<classpathentry kind="lib" path="dependencies/kernel-7.1.3-javadoc.jar"/>
-	<classpathentry kind="lib" path="dependencies/kernel-7.1.3-sources.jar"/>
 	<classpathentry kind="lib" path="dependencies/kernel-7.1.3.jar"/>
-	<classpathentry kind="lib" path="dependencies/layout-7.1.3-javadoc.jar"/>
-	<classpathentry kind="lib" path="dependencies/layout-7.1.3-sources.jar"/>
 	<classpathentry kind="lib" path="dependencies/layout-7.1.3.jar"/>
-	<classpathentry kind="lib" path="dependencies/pdfa-7.1.3-javadoc.jar"/>
-	<classpathentry kind="lib" path="dependencies/pdfa-7.1.3-sources.jar"/>
-	<classpathentry kind="lib" path="dependencies/pdfa-7.1.3.jar"/>
-	<classpathentry kind="lib" path="dependencies/pdftest-7.1.3-javadoc.jar"/>
-	<classpathentry kind="lib" path="dependencies/pdftest-7.1.3-sources.jar"/>
-	<classpathentry kind="lib" path="dependencies/pdftest-7.1.3.jar"/>
-	<classpathentry kind="lib" path="dependencies/sign-7.1.3-javadoc.jar"/>
-	<classpathentry kind="lib" path="dependencies/sign-7.1.3-sources.jar"/>
 	<classpathentry kind="lib" path="dependencies/sign-7.1.3.jar"/>
-	<classpathentry kind="lib" path="dependencies/styled-xml-parser-7.1.3-javadoc.jar"/>
-	<classpathentry kind="lib" path="dependencies/styled-xml-parser-7.1.3-sources.jar"/>
 	<classpathentry kind="lib" path="dependencies/styled-xml-parser-7.1.3.jar"/>
-	<classpathentry kind="lib" path="dependencies/svg-7.1.3-javadoc.jar"/>
-	<classpathentry kind="lib" path="dependencies/svg-7.1.3-sources.jar"/>
 	<classpathentry kind="lib" path="dependencies/svg-7.1.3.jar"/>
 	<classpathentry kind="lib" path="dependencies/itextpdf-5.4.0.jar"/>
 	<classpathentry kind="output" path="bin"/>

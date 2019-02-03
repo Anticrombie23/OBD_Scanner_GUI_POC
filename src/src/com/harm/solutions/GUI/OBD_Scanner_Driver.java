@@ -39,41 +39,6 @@ import src.com.harm.solutions.utilities.ProcessingException;
 
 public class OBD_Scanner_Driver {
 
-	// private final class ScannerUtils implements ActionListener {
-	// private final JFileChooser chooser;
-	// private final JLabel fileSelectedLabel;
-	// private final JLabel notNullLabel;
-	//
-	// private ScannerUtils(JFileChooser chooser, JLabel fileSelectedLabel, JLabel
-	// notNullLabel) {
-	// this.chooser = chooser;
-	// this.fileSelectedLabel = fileSelectedLabel;
-	// this.notNullLabel = notNullLabel;
-	// }
-	//
-	// public void actionPerformed(ActionEvent arg0) {
-	// selectScanFile(fileSelectedLabel, chooser, notNullLabel);
-	// }
-	//
-	// private void validateFileAddedSuccessfully(JLabel notNullLabel) {
-	// if (null == rawData) {
-	// throw new ProcessingException(".drt file not added!");
-	// } else {
-	// notNullLabel.setEnabled(false);
-	// notNullLabel.setText("");
-	// }
-	// }
-	//
-	// private void loadFileIntoXMLObject(InputStream file) throws Exception {
-	//
-	// JAXBContext jc = JAXBContext.newInstance(Doc.class);
-	// Unmarshaller unmarshaller = jc.createUnmarshaller();
-	//
-	// rawData = (Doc) unmarshaller.unmarshal(file);
-	//
-	// }
-	// }
-
 	private JFrame frame;
 	private JTextField companyName;
 	private PDFGenerator generator;
@@ -312,7 +277,7 @@ public class OBD_Scanner_Driver {
 			}
 
 			private void createPDF() throws IOException, DocumentException {
-				generator.updateAndSavePDFToDesktop(fieldContents, preScan);
+				generator.updateAndSavePDFToDesktop(fieldContents, preScan, postScan);
 			}
 
 			private void validateSubmission() {
@@ -448,7 +413,7 @@ public class OBD_Scanner_Driver {
 	}
 
 	private void validateFileAddedSuccessfully(JLabel notNullLabel) {
-		if (null == preScan) {
+		if (null == preScan && null == postScan) {
 			throw new ProcessingException(".drt file not added!");
 		} else {
 			notNullLabel.setEnabled(false);
