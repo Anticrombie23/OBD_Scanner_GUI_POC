@@ -85,7 +85,6 @@ public class OBD_Scanner_Driver {
 	 */
 	public OBD_Scanner_Driver() throws MalformedURLException, IOException {
 		initialize();
-		generator = new PDFGenerator();
 		initJTextFields();
 	}
 
@@ -108,7 +107,7 @@ public class OBD_Scanner_Driver {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 404, 773);
+		frame.setBounds(100, 100, 404, 891);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
@@ -126,7 +125,7 @@ public class OBD_Scanner_Driver {
 		fileSelectedLabel.setBackground(Color.GREEN);
 		fileSelectedLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		fileSelectedLabel.setFont(new Font("Sitka Small", Font.PLAIN, 13));
-		fileSelectedLabel.setBounds(47, 560, 261, 14);
+		fileSelectedLabel.setBounds(10, 496, 368, 14);
 		frame.getContentPane().add(fileSelectedLabel);
 
 		JFileChooser chooser = new JFileChooser();
@@ -246,7 +245,7 @@ public class OBD_Scanner_Driver {
 		frame.getContentPane().add(notNullLabel);
 
 		JButton createPDFButton = new JButton("Create PDF Invoice");
-		createPDFButton.setBounds(28, 654, 303, 23);
+		createPDFButton.setBounds(28, 769, 303, 23);
 
 		createPDFButton.addActionListener(new ActionListener() {
 
@@ -277,7 +276,8 @@ public class OBD_Scanner_Driver {
 			}
 
 			private void createPDF() throws IOException, DocumentException {
-				generator.updateAndSavePDFToDesktop(fieldContents, preScan, postScan);
+				generator = new PDFGenerator(preScan, postScan);
+				generator.updateAndSavePDFToDesktop(fieldContents);
 			}
 
 			private void validateSubmission() {
@@ -331,7 +331,7 @@ public class OBD_Scanner_Driver {
 
 		JLabel lblNewLabel_3 = new JLabel("Josh Harm 2019");
 		lblNewLabel_3.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_3.setBounds(28, 687, 303, 14);
+		lblNewLabel_3.setBounds(28, 803, 303, 14);
 		frame.getContentPane().add(lblNewLabel_3);
 
 		JButton preScan = new JButton("Select PreScan Diagnostic Report (.drt) File ");
@@ -344,7 +344,7 @@ public class OBD_Scanner_Driver {
 			}
 
 		});
-		preScan.setBounds(28, 585, 303, 23);
+		preScan.setBounds(28, 563, 303, 23);
 		frame.getContentPane().add(preScan);
 
 		JButton postScan = new JButton("Select PostScan Diagnostic Report (.drt) File");
@@ -354,8 +354,31 @@ public class OBD_Scanner_Driver {
 				selectScanFile(fileSelectedLabel, chooser, notNullLabel, 2);
 			}
 		});
-		postScan.setBounds(28, 620, 306, 23);
+		postScan.setBounds(33, 649, 306, 23);
 		frame.getContentPane().add(postScan);
+		
+		JButton btnNewButton = new JButton("Remove PreScan");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {				
+				
+				OBD_Scanner_Driver.this.preScan = null;				
+				fileSelectedLabel.setText("PreScan removed successfully");
+				
+			}
+		});
+		btnNewButton.setBounds(108, 597, 169, 23);
+		frame.getContentPane().add(btnNewButton);
+		
+		JButton btnRemovePostscan = new JButton("Remove PostScan");
+		btnRemovePostscan.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				OBD_Scanner_Driver.this.postScan = null;				
+				fileSelectedLabel.setText("PostScan removed successfully");
+			}
+		});
+		btnRemovePostscan.setBounds(108, 688, 169, 23);
+		frame.getContentPane().add(btnRemovePostscan);
 
 	}
 

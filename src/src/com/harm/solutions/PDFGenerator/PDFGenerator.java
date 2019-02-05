@@ -12,16 +12,20 @@ import javax.swing.JTextField;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
-import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import src.com.harm.solutions.models.Doc;
+import src.com.harm.solutions.models.ScanType;
 import src.com.harm.solutions.utilities.FileNameUtility;
 
 public class PDFGenerator extends PdfPageEventHelper {
@@ -30,17 +34,24 @@ public class PDFGenerator extends PdfPageEventHelper {
 	File outputFile;
 	PdfReader pdfReader;
 	FileNameUtility utility = new FileNameUtility();
+	Doc preScan, postScan;
 
-	public PDFGenerator() throws MalformedURLException, IOException {
+	ScanType scanType;
+
+	public PDFGenerator(Doc preScan, Doc postScan) throws MalformedURLException, IOException {
+		this.preScan = preScan;
+		this.postScan = postScan;
+		getScanType(preScan, postScan);
 		initPDFTemplate();
 	}
 
-	public void updateAndSavePDFToDesktop(Map<String, JTextField> fieldContents, Doc preScanData, Doc postScanData)
-			throws IOException, DocumentException {
+	private void getScanType(Doc preScan, Doc postScan) {
+		boolean isPrescan = (null != preScan) ? true : false;
+		boolean isPostScan = (null != postScan) ? true : false;
+		scanType = ScanType.determineScanType(isPrescan, isPostScan);
+	}
 
-		boolean isPrescan = (null != preScanData) ? true : false;
-		boolean isPostScan = (null != postScanData) ? true : false;
-
+	public void updateAndSavePDFToDesktop(Map<String, JTextField> fieldContents) throws IOException, DocumentException {
 		String dest = utility.generateFileName(fieldContents);
 		outputFile = new File(dest);
 		Document document = new Document(PageSize.A4);
@@ -48,10 +59,8 @@ public class PDFGenerator extends PdfPageEventHelper {
 		PdfWriter writer = PdfWriter.getInstance(document, stream);
 		document.open();
 		PdfContentByte cb = writer.getDirectContent();
-
-		writePDFPage(document, writer, cb, 1, fieldContents, stream, isPrescan, isPostScan);
-		writePDFPage(document, writer, cb, 2, fieldContents, stream, isPrescan, isPostScan);
-		writeFinalPage(document, cb, fieldContents, preScanData, stream, postScanData);
+		writePDFPage(document, writer, cb, 1, fieldContents, stream);
+		writePDFPage(document, writer, cb, 2, fieldContents, stream);
 		inputDocumentAttributes(document);
 		stream.close();
 
@@ -63,31 +72,11 @@ public class PDFGenerator extends PdfPageEventHelper {
 		document.addLanguage("English");
 	}
 
-	private void writeFinalPage(Document document, PdfContentByte cb, Map<String, JTextField> fieldContents,
-			Doc preScanData, FileOutputStream stream, Doc postScanData) {
-
-		try {
-			document.open();
-			stream.flush();
-			PdfWriter writer = PdfWriter.getInstance(document, stream);
-			PdfTemplate tableTemplate = PdfTemplate.createTemplate(writer, 1500, 1300);
-
-			cb.addTemplate(tableTemplate, 0, 0);
-
-		} catch (DocumentException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
 	protected void writePDFPage(Document document, PdfWriter writer, PdfContentByte cb, int pageNumber,
-			Map<String, JTextField> map, FileOutputStream stream, boolean isPrescan, boolean isPostScan) {
+			Map<String, JTextField> map, FileOutputStream stream) {
 
 		if (1 == pageNumber) {
-			addContentToPageOne(map, stream, isPrescan, isPostScan);
+			addContentToPageOneAndThree(map, stream);
 		}
 
 		PdfImportedPage page = writer.getImportedPage(pdfReader, pageNumber);
@@ -95,8 +84,7 @@ public class PDFGenerator extends PdfPageEventHelper {
 		cb.addTemplate(page, 0, 0);
 	}
 
-	private void addContentToPageOne(Map<String, JTextField> map, FileOutputStream stream, boolean isPrescan,
-			boolean isPostScan) {
+	private void addContentToPageOneAndThree(Map<String, JTextField> map, FileOutputStream stream) {
 
 		LocalDateTime ldt = LocalDateTime.now();
 
@@ -120,10 +108,8 @@ public class PDFGenerator extends PdfPageEventHelper {
 			stamper.getAcroFields().setField("City ST ZIP Code_2", map.get("customerCityStateZip").getText());
 			stamper.getAcroFields().setField("Phone_2", map.get("customerPhoneNumber").getText());
 
-			inputStaticContentIntoPDF(stamper, isPrescan, isPostScan);
-
+			inputStaticContentIntoPDF(stamper, map);
 			stamper.setFormFlattening(true);
-
 			stamper.close();
 
 		} catch (DocumentException | IOException e) {
@@ -133,14 +119,12 @@ public class PDFGenerator extends PdfPageEventHelper {
 
 	}
 
-	protected void inputStaticContentIntoPDF(PdfStamper stamper, boolean isPrescan, boolean isPostScan)
+	protected void inputStaticContentIntoPDF(PdfStamper stamper, Map<String, JTextField> map)
 			throws IOException, DocumentException {
 		// Static content
+		String total = scanType.equals(ScanType.BothScans) ? "$300.00" : "$150.00";
 
-		String subTotal = (isPrescan && isPostScan) ? "300.00" : "150.00";
-		String total = (isPrescan && isPostScan) ? "$300.00" : "$150.00";
-
-		if (isPrescan && isPostScan) {
+		if (scanType.equals(ScanType.BothScans)) {
 			stamper.getAcroFields().setField("DescriptionRow1", "Diagnostic OBD Scan: Pre-Scan");
 			stamper.getAcroFields().setField("Quantity  HoursRow1", " 1.0 x Scan");
 			stamper.getAcroFields().setField("DescriptionRow2", "Diagnostic OBD Scan: Post-Scan");
@@ -150,12 +134,12 @@ public class PDFGenerator extends PdfPageEventHelper {
 			stamper.getAcroFields().setField("Price Row2", "150.00");
 			stamper.getAcroFields().setField("Total Row1", "$150.00");
 			stamper.getAcroFields().setField("Total Row2", "$150.00");
-		} else if (isPrescan && !isPostScan) {
+		} else if (scanType.equals(ScanType.PreScanOnly)) {
 			stamper.getAcroFields().setField("DescriptionRow1", "Diagnostic OBD Scan: Pre-Scan");
 			stamper.getAcroFields().setField("Quantity  HoursRow1", " 1.0 x Scan");
 			stamper.getAcroFields().setField("Price Row1", "150.00");
 			stamper.getAcroFields().setField("Total Row1", "$150.00");
-		} else if (!isPrescan && isPostScan) {
+		} else if (scanType.equals(ScanType.PostScanOnly)) {
 			stamper.getAcroFields().setField("DescriptionRow1", "Diagnostic OBD Scan: Post-Scan");
 			stamper.getAcroFields().setField("Quantity  HoursRow1", " 1.0 x Scan");
 			stamper.getAcroFields().setField("Price Row1", "150.00");
@@ -169,6 +153,21 @@ public class PDFGenerator extends PdfPageEventHelper {
 		stamper.getAcroFields().setField("Thank you for your business Please send payment within", "30");
 		stamper.getAcroFields().setField("will be a", "15%");
 		stamper.getAcroFields().setField("per", "week");
+
+		addPageThreeContent(stamper, map);
+
+	}
+
+	private void addPageThreeContent(PdfStamper stamper, Map<String, JTextField> map) {
+		Rectangle rec = new Rectangle(615, 725);
+		stamper.insertPage(3, rec);
+
+		PdfContentByte canvas = stamper.getOverContent(3);
+		ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, new Paragraph("TESTTESTTEST"), 36, 540, 0);
+		ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, new Paragraph("hello people!"), 36, 540, 0);
+		ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, new Paragraph("hello people!"), 36, 540, 0);
+		ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, new Paragraph("hello people!"), 36, 540, 0);
+		ColumnText.showTextAligned(canvas, Element.ALIGN_LEFT, new Paragraph("hello people!"), 36, 540, 0);
 	}
 
 	private void initPDFTemplate() throws MalformedURLException, IOException {
